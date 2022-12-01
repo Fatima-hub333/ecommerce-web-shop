@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import { CssBaseline, Paper, Stepper, Step, StepLabel, Typography, CircularProgress, Divider, Button } from '@material-ui/core';
 import { Link, useHistory } from 'react-router-dom';
@@ -15,6 +16,7 @@ const Checkout = ({ cart, onCaptureCheckout, order, error }) => {
   const [shippingData, setShippingData] = useState({});
   const classes = useStyles();
   const history = useHistory();
+
   const nextStep = () => setActiveStep((prevActiveStep) => prevActiveStep + 1);
   const backStep = () => setActiveStep((prevActiveStep) => prevActiveStep - 1);
 
@@ -23,6 +25,7 @@ const Checkout = ({ cart, onCaptureCheckout, order, error }) => {
       const generateToken = async () => {
         try {
           const token = await commerce.checkout.generateToken(cart.id, { type: 'cart' });
+
           setCheckoutToken(token);
         } catch {
           if (activeStep !== steps.length) history.push('/');
@@ -35,6 +38,7 @@ const Checkout = ({ cart, onCaptureCheckout, order, error }) => {
 
   const test = (data) => {
     setShippingData(data);
+
     nextStep();
   };
 
