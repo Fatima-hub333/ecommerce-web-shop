@@ -1,11 +1,16 @@
-import React, {useState, useEffect} from 'react';
-import { commerce } from './lib/commerce';
-import { Products, Navbar, Cart, Checkout } from './components';
+import React, { useState, useEffect } from 'react';
+import { CssBaseline } from '@material-ui/core';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
+import { Navbar, Products, Cart, Checkout } from './components';
+import { commerce } from './lib/commerce';
+
 const App = () => {
+  const [mobileOpen, setMobileOpen] = React.useState(false);
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState({});
+  const [order, setOrder] = useState({});
+  const [errorMessage, setErrorMessage] = useState('');
 
   const fetchProducts = async () => {
     const { data } = await commerce.products.list();
@@ -41,15 +46,35 @@ const App = () => {
     setCart(response.cart);
   };
 
- useEffect(() => {
+  const refreshCart = async () => {
+    const newCart = await commerce.cart.refresh();
+
+    setCart(newCart);
+  };
+
+  const handleCaptureCheckout = async (checkoutTokenId, newOrder) => {
+    try {
+      const incomingOrder = await commerce.checkout.capture(checkoutTokenId, newOrder);
+
+      setOrder(incomingOrder);
+
+      refreshCart();
+    } catch (error) {
+      setErrorMessage(error.data.error.message);
+    }
+  };
+
+  useEffect(() => {
     fetchProducts();
     fetchCart();
   }, []);
 
+  const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
   return (
     <Router>
       <div style={{ display: 'flex' }}>
+        <CssBaseline />
         <Navbar totalItems={cart.total_items} handleDrawerToggle={handleDrawerToggle} />
         <Switch>
           <Route exact path="/">
@@ -64,8 +89,7 @@ const App = () => {
         </Switch>
       </div>
     </Router>
-   
-  )
-}
+  );
+};
 
 export default App;
