@@ -1,10 +1,13 @@
 import React from 'react';
 import { Typography, Button, Card, CardActions, CardContent, CardMedia } from '@material-ui/core';
+
 import useStyles from './styles';
 
 const CartItem = ({ item, onUpdateCartQty, onRemoveFromCart }) => {
   const classes = useStyles();
+
   const handleUpdateCartQty = (lineItemId, newQuantity) => onUpdateCartQty(lineItemId, newQuantity);
+
   const handleRemoveFromCart = (lineItemId) => onRemoveFromCart(lineItemId);
 
   return (

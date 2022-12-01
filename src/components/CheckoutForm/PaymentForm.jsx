@@ -10,10 +10,13 @@ const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
 const PaymentForm = ({ checkoutToken, nextStep, backStep, shippingData, onCaptureCheckout }) => {
   const handleSubmit = async (event, elements, stripe) => {
     event.preventDefault();
+
     if (!stripe || !elements) return;
-    
+
     const cardElement = elements.getElement(CardElement);
+
     const { error, paymentMethod } = await stripe.createPaymentMethod({ type: 'card', card: cardElement });
+
     if (error) {
       console.log('[error]', error);
     } else {
